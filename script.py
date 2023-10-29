@@ -2,7 +2,6 @@ from bs4 import BeautifulSoup
 import requests
 import pandas as pd
 
-
 url ="https://www.apple.com/ca_edu_93120/shop/refurbished/mac" 
 page = requests.get(url)
 
@@ -16,8 +15,6 @@ for item in item_links:
     link = name['href']
     name = str(name.text.encode("utf-8"))
     if "MacBook" in name:
-        
-        print(link)
         current_price = item.find("div", "as-price-currentprice as-producttile-currentprice")
         
         #cleaning up
@@ -26,4 +23,4 @@ for item in item_links:
         
         new_row = {'name': name, 'price': price, 'link': "https://www.apple.com"+link}
         df= df._append(new_row, ignore_index = True)
-print(df)
+df.to_excel('text.xlsx',sheet_name='sheet1',index=False)
