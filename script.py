@@ -14,14 +14,16 @@ df = pd.DataFrame(columns = ['name','price','link'])
 for item in item_links:
     name = item.find("a")
     link = name['href']
-    current_price = item.find("div", "as-price-currentprice as-producttile-currentprice")
-    
-    #cleaning up 
     name = str(name.text.encode("utf-8"))
-    price = str(current_price.string.encode("utf-8")).split("$")[1].split(".")[0]
     if "MacBook" in name:
+        
+        print(link)
+        current_price = item.find("div", "as-price-currentprice as-producttile-currentprice")
+        
+        #cleaning up
+        price = str(current_price.string.encode("utf-8")).split("$")[1].split(".")[0]
         name = name.split("b'")[1]
         
-        new_row = {'name': name, 'price': price, 'link': link}
+        new_row = {'name': name, 'price': price, 'link': "https://www.apple.com"+link}
         df= df._append(new_row, ignore_index = True)
 print(df)
