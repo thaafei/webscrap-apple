@@ -18,8 +18,10 @@ for item in item_links:
     
     #cleaning up 
     name = str(name.text.encode("utf-8"))
+    price = str(current_price.string.encode("utf-8")).split("$")[1].split(".")[0]
     if "MacBook" in name:
         name = name.split("b'")[1]
-        new_row = {'name': name, 'price':str(current_price.string.encode("utf-8")), 'link': link}
+        
+        new_row = {'name': name, 'price': price, 'link': link}
         df= df._append(new_row, ignore_index = True)
 print(df)
