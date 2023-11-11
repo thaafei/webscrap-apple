@@ -68,14 +68,15 @@ def main():
     item_links = item_div.find_all("li")
     for i in item_links:
         if "Macbook" in i:
-            name = i.find("a")
-            link = name['href']
+            item = i.find("a")
+            link = item['href']
             id = link.split("/")[4]
-
             #check if id already exists
             cur.execute("SELECT 1 FROM macbook WHERE id = ?", (id,))
             #id it dosen't exist, add to table
             if not cur.fetchone():
+                name = str(item.text.encode("utf-8")).split("b'")[1]
+                price = str(i.find("div", "as-price-currentprice as-producttile-currentprice").string.encode("utf-8")).split("$")[1].split(".")[0]
                 additional_info = additional_info()
                 cur.execute("INSERT INTO macbook (id, name, link, price,year, ram, storage) VALUES (?, ?, ?, ?, ?, ?,?)",(id, name, link, price, additional_info[0], additional_info[1], additional_info[2]))
-
+        
