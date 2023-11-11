@@ -43,11 +43,14 @@ def get_laptop_info(link):
 
 def create_connection():
     con = sql.connect("products.sqlite")
+    return con,con.cursor()
+
+def initial():
+    con = sql.connect("products.sqlite")
     cur = con.cursor()
     cur.execute('''CREATE TABLE IF NOT EXISTS macbook
-                  (id VARCHAR PRIMARY KEY, name TEXT, link TEXT, year INTEGER, ram INTEGER, storage INTEGER)''')
+                  (id VARCHAR PRIMARY KEY, name TEXT, link TEXT, price INTEGER, year INTEGER, ram INTEGER, storage INTEGER)''')
     con.commit()
-    return con
 
 def main():
     url ="https://www.apple.com/ca_edu_93120/shop/refurbished/mac" 
@@ -58,9 +61,7 @@ def main():
     item_links = item_div.find_all("li")
     
     #create database
-    con = create_connection()
-    cur = con.cursor()
-
+    con, cur = create_connection()
 
     #df = pd.DataFrame(columns = ['name','price','link','year', 'ram','storage'])
     for item in item_links:
@@ -79,7 +80,7 @@ def main():
             #new_row = {'name': name, 'price': price, 'link': link,'year': additional_info[0],'ram': additional_info[1],'storage':additional_info[2]}
             #df= df._append(new_row, ignore_index = True)
             try:
-                cur.execute("INSERT INTO macbook (id, name, link, year, ram, storage) VALUES (?, ?, ?, ?, ?, ?)",(id_value, name_value, link_value, additional_info[0], additional_info[1], additional_info[2]))
+                cur.execute("INSERT INTO macbook (id, name, link, price,year, ram, storage) VALUES (?, ?, ?, ?, ?, ?,?)",(id, name, link, price, additional_info[0], additional_info[1], additional_info[2]))
             except sql.IntegrityError:
                 # Handle the case where the ID already exists (unique constraint violation)
                 print("Skipping insertion due to existing ID.")
@@ -88,4 +89,5 @@ def main():
     #print("outputting to excel")
     #df.to_excel('text.xlsx',sheet_name='sheet1',index=False)
 
+initial()
 main()
