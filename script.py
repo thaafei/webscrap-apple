@@ -1,30 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
-import pandas as pd
 import sqlite3 as sql
-
-
-# class Worker(Thread):
-#     def __init__(self,list,start,end):
-#         super().__init__();
-#         self.list = list
-#         self.start = start
-#         self.end = end
-#     def run(self):
-#         for i in range(self.start,self.end):
-#             name = list.content[i].find("a")
-#             link = name['href']
-#             name = str(name.text.encode("utf-8"))
-#             if "MacBook" in name:
-#                 current_price = item.find("div", "as-price-currentprice as-producttile-currentprice")
-#                 #cleaning up
-#                 price = str(current_price.string.encode("utf-8")).split("$")[1].split(".")[0]
-#                 name = name.split("b'")[1]
-#                 link = "https://www.apple.com"+link
-#                 additional_info = get_laptop_info(link)
-#                 new_row = {'name': name, 'price': price, 'link': link,'year': additional_info[0],'ram': additional_info[1],'storage':additional_info[2]}
-#                 df= df._append(new_row, ignore_index = True)
-#                 print(i)
 
 
 def get_laptop_info(link):
@@ -77,17 +53,13 @@ def main():
             name = name.split("b'")[1]
             link = "https://www.apple.com"+link
             additional_info = get_laptop_info(link)
-            #new_row = {'name': name, 'price': price, 'link': link,'year': additional_info[0],'ram': additional_info[1],'storage':additional_info[2]}
-            #df= df._append(new_row, ignore_index = True)
+            
             try:
                 cur.execute("INSERT INTO macbook (id, name, link, price,year, ram, storage) VALUES (?, ?, ?, ?, ?, ?,?)",(id, name, link, price, additional_info[0], additional_info[1], additional_info[2]))
             except sql.IntegrityError:
                 # Handle the case where the ID already exists (unique constraint violation)
                 print("Skipping insertion due to existing ID.")
             con.commit()
-
-    #print("outputting to excel")
-    #df.to_excel('text.xlsx',sheet_name='sheet1',index=False)
 
 initial()
 main()
