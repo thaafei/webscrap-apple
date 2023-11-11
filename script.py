@@ -86,3 +86,6 @@ def main():
                     message =str(name+" "+price+" /n"+link),
                     timeout = 2
                 )
+con,cur = create_connection()
+cur.execute("DELETE FROM macbook WHERE id=FGN63LL")
+con.commit()
