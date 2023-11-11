@@ -77,6 +77,12 @@ def main():
             if not cur.fetchone():
                 name = str(item.text.encode("utf-8")).split("b'")[1]
                 price = str(i.find("div", "as-price-currentprice as-producttile-currentprice").string.encode("utf-8")).split("$")[1].split(".")[0]
-                additional_info = additional_info()
+                link = "https://www.apple.com"+link
+                additional_info = get_laptop_info(link)
                 cur.execute("INSERT INTO macbook (id, name, link, price,year, ram, storage) VALUES (?, ?, ?, ?, ?, ?,?)",(id, name, link, price, additional_info[0], additional_info[1], additional_info[2]))
-        
+                #notify desktop
+                notif.notify(
+                    title ="New Item Added",
+                    message =str(name+" "+price+" /n"+link),
+                    timeout = 2
+                )
