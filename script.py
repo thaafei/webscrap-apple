@@ -42,7 +42,7 @@ def initial_setup():
         link = item['href']
         id = link.split("/")[4]
         name = str(item.text.encode("utf-8"))
-        if "MacBook" in item:
+        if "MacBook" in name:
             print (id)
             current_price = i.find("div", "as-price-currentprice as-producttile-currentprice")
             #cleaning up
@@ -67,25 +67,30 @@ def main():
     item_div = soup.find("div","rf-refurb-category-grid-no-js")
     item_links = item_div.find_all("li")
     for i in item_links:
-        if "Macbook" in i:
-            item = i.find("a")
+        item = i.find("a")
+        name = str(item.text.encode("utf-8"))
+        if "Macbook" in name:
+            print(id)
             link = item['href']
             id = link.split("/")[4]
             #check if id already exists
             cur.execute("SELECT 1 FROM macbook WHERE id = ?", (id,))
             #id it dosen't exist, add to table
             if not cur.fetchone():
-                name = str(item.text.encode("utf-8")).split("b'")[1]
+                name = name.split("b'")[1]
                 price = str(i.find("div", "as-price-currentprice as-producttile-currentprice").string.encode("utf-8")).split("$")[1].split(".")[0]
                 link = "https://www.apple.com"+link
                 additional_info = get_laptop_info(link)
                 cur.execute("INSERT INTO macbook (id, name, link, price,year, ram, storage) VALUES (?, ?, ?, ?, ?, ?,?)",(id, name, link, price, additional_info[0], additional_info[1], additional_info[2]))
                 #notify desktop
+                print("notifying")
                 notif.notify(
                     title ="New Item Added",
                     message =str(name+" "+price+" /n"+link),
                     timeout = 2
                 )
-con,cur = create_connection()
-cur.execute("DELETE FROM macbook WHERE id=FGN63LL")
-con.commit()
+# con,cur = create_connection()
+# cur.execute("DELETE FROM macbook WHERE id='FGN63LL'")
+# con.commit()
+
+main()
